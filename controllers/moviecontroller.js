@@ -6,11 +6,21 @@ const getMovies = async (req, res) => {
 };
 
 const addMovie = async (req, res) => {
-  const newMovie = await prisma.movies.create({ data: req.body });
-  res.json(newMovie);
+  try {
+    const movie = req.body;
+    console.log(movie, "if");
+    try {
+      const newMovie = await prisma.movies.create({
+        data: { moviename: movie.moviename, creatorId: movie.creatorId },
+      });
+      console.log(newMovie, "new");
+      res.json(newMovie);
+    } catch (error) {
+      res.sendStatus(403);
+    }
+  } catch (err) {
+    res.sendStatus(500);
+  }
 };
 
-module.exports = {
-  getMovies,
-  addMovie,
-};
+module.exports = { getMovies, addMovie };

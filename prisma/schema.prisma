@@ -8,19 +8,27 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(uuid())
+    userId    String   @id @default(uuid())
     firstname String
     lastname  String
     password  String
     phone     String
-    privilege Int
+    privilege Role     @default(USER)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Movies    Movies[]
+}
+
+model Movies {
+    movieId   String   @id @default(uuid())
+    moviename String
+    creatorId String
+    creator   User     @relation(fields: [creatorId], references: [userId])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-model Movies {
-    id        String   @id @default(uuid())
-    moviename String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum Role {
+    ADMIN
+    USER
 }

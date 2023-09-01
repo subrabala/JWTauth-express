@@ -25,16 +25,17 @@ const updateUser = async (req, res) => {
   const param_id = req.params.id;
   const newPhone = req.body.phone;
   const updatedUser = await prisma.user.update({
-    where: { id: param_id },
+    where: { userId: param_id },
     data: { phone: newPhone },
   });
   res.json(updatedUser);
 };
 
 const deleteUser = async (req, res) => {
+  console.log(req.params.id, "");
   const param_id = req.params.id;
   const deletedUser = await prisma.user.delete({
-    where: { id: param_id },
+    where: { userId: param_id },
   });
   res.json(deletedUser);
 };
