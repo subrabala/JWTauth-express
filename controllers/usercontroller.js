@@ -22,22 +22,30 @@ const addUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const param_id = req.params.id;
-  const newPhone = req.body.phone;
-  const updatedUser = await prisma.user.update({
-    where: { userId: param_id },
-    data: { phone: newPhone },
-  });
-  res.json(updatedUser);
+  try {
+    const param_id = req.params.id;
+    const newPhone = req.body.phone;
+    const updatedUser = await prisma.user.update({
+      where: { userId: param_id },
+      data: { phone: newPhone },
+    });
+    res.json(updatedUser);
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 const deleteUser = async (req, res) => {
-  console.log(req.params.id, "");
-  const param_id = req.params.id;
-  const deletedUser = await prisma.user.delete({
-    where: { userId: param_id },
-  });
-  res.json(deletedUser);
+  try {
+    console.log("delete user")
+    const param_id = req.params.id;
+    const deletedUser = await prisma.user.delete({
+      where: { userId: param_id },
+    });
+    res.json(deletedUser);
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 module.exports = {

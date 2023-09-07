@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./.env" });
 
+// verifying if the user exists in the DB and then generating JWT
 const userLogin = async (req, res, next) => {
   const providedUsername = req.body.firstname;
   const providedPassword = req.body.password;
@@ -32,14 +33,19 @@ const userLogin = async (req, res, next) => {
   }
 };
 
+
+// middleware to handle aunthentication for protected routes
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401).json({ error: "Token not available" });
+  if (token == null)
+    return res.sendStatus(401).json({ error: "Token not available" });
 
   try {
     jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403).json({ error: "Forbidden" });
+      if (err) return res.sendStatus(403).json({ error: "Not Verified" });
+
+      // sending the userId as request body to the next middleware - privilegechecker
       req.body.creatorId = user.userId;
       next();
     });
@@ -48,6 +54,7 @@ function authenticateToken(req, res, next) {
   }
 }
 
+// create a new token when user logs in
 function generateToken(uid) {
   return jwt.sign(uid, process.env.TOKEN_SECRET, { expiresIn: "3000s" });
 }

@@ -11,23 +11,31 @@ const privilegechecker = require("./middleware/privilegechecker");
 app.use(express.json());
 app.use(cors("*"));
 
-app.get("/user", usercontroller.getUsers);
-
 app.post("/signup", usercontroller.addUser);
-
 app.post("/login", authcontroller.userLogin);
 
-app.put("/:id", usercontroller.updateUser);
+app.use(authcontroller.authenticateToken);
 
-app.delete("/user/:id", usercontroller.deleteUser);
+// ROUTES
+
+app.get("/user", usercontroller.getUsers);
+
+app.put(
+  "/user/:id",
+  privilegechecker.privilegechecker,
+  usercontroller.updateUser
+);
+
+app.delete(
+  "/user/:id",
+  privilegechecker.privilegechecker,
+  usercontroller.deleteUser
+);
 
 app.get("/movie", moviecontroller.getMovies);
 
-app.post(
-  "/movie",
-  authcontroller.authenticateToken,
-  privilegechecker.privilegechecker,
-  moviecontroller.addMovie
-);
+app.post("/movie", privilegechecker.privilegechecker, moviecontroller.addMovie);
 
 app.listen(3000, () => "listening to port 3000");
+
+// prometheus - honeypot
